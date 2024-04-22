@@ -17,15 +17,11 @@ object modules extends CrossPlatform {
     }
 
     object jvm extends Shared with PublishedProject {
-      object test extends ScalaTests with ZioTestProject {
-        
-      }
+      object test extends ScalaTests with ZioTestProject {}
     }
 
     object js extends Shared with ScalaJSProject with PublishedProject {
-      object test extends ScalaJSTests with ZioTestProject {
-        
-      }
+      object test extends ScalaJSTests with ZioTestProject {}
     }
   }
 
@@ -39,16 +35,14 @@ object modules extends CrossPlatform {
       }
 
       object jvm extends Shared with PublishedProject {
-        object test extends ScalaTests with ZioTestProject {
-          
-        }
+        object test extends ScalaTests with ZioTestProject {}
       }
 
       object js extends Shared with ScalaJSProject with PublishedProject {
-        object test extends ScalaJSTests with ZioTestProject {          
-        }
+        object test extends ScalaJSTests with ZioTestProject {}
       }
-    
+
+    }
   }
 }
 

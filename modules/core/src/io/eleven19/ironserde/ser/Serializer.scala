@@ -1,8 +1,10 @@
-package io.eleven19.ironserde
+package io.eleven19.ironserde.ser
+import io.eleven19.ironserde.Result
 
 trait Serializer {
   type Ok
-  type Error <: io.eleven19.ironserde.Error
+  type Error <: ErrorMethods
+  def Error: ErrorModule[Error]
 
   def serializeBoolean(value: Boolean): Result[Error, Ok]
   def serializeByte(value: Byte): Result[Error, Ok]
@@ -26,8 +28,9 @@ trait Serializer {
 }
 
 object Serializer:
-  type Aux[TOk, TError] = Serializer { type Ok = TOk; type Error = TError }
-  trait Generic[TOk, TError] extends Serializer:
-    type Ok = TOk
-    type Error = TError
+  // type Aux[TOk, TError] = Serializer { type Ok = TOk; type Error = TError }
+  // trait Generic[TOk, TError ] extends Serializer:
+  //   type Ok = TOk
+  //   type Error <: ErrorMethods = TError
+end Serializer
     
