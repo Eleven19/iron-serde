@@ -1,4 +1,4 @@
-package io.eleven19.ironserde
+package io.eleven19.irony.std
 
 opaque type Result[+Err,+A] <: Either[Err, A] = Either[Err,A]
 object Result:

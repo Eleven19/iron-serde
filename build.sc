@@ -1,44 +1,61 @@
-import mill._, scalalib._, scalajslib._, scalanativelib._, publish._
+import mill._
+import mill.scalalib._
+import mill.scalajslib._
+import mill.scalanativelib._
+import mill.scalalib.publish._
+import mill.scalalib.scalafmt._
 import mill.scalalib.publish.PublishInfo
 import $ivy.`io.chris-kipp::mill-ci-release::0.1.9`
-import $ivy.`io.eleven19.mill::mill-crossbuild::0.1.0`
-import io.eleven19.mill.crossbuild._
+import $ivy.`io.eleven19.mill::mill-crossbuild::0.3.0`
+import io.eleven19.mill.crossbuild
+import io.eleven19.mill.crossbuild.{CrossPlatform, PlatformAwareScalaProject}
 import io.kipp.mill.ci.release.CiReleaseModule
 
-object modules extends CrossPlatform {
+object irony extends CrossPlatform {
 
-  object core extends CrossPlatform {
-    trait Shared
-        extends ScalaProject
-        with PlatformScalaModule
-        with PublishedProject {
+  object serde extends CrossPlatform {
+    trait Shared extends ScalaProject with PublishedProject {
+      def platformModuleDeps = Seq(std)
       def ivyDeps =
         Agg(Deps.io.github.kitlangton.neotype)
     }
 
-    object jvm extends Shared with PublishedProject {
+    object jvm extends Shared with ScalaJvmProject {
       object test extends ScalaTests with ZioTestProject {}
     }
 
-    object js extends Shared with ScalaJSProject with PublishedProject {
+    object js extends Shared with ScalaJSProject {
       object test extends ScalaJSTests with ZioTestProject {}
     }
   }
 
+  object std extends CrossPlatform {
+    trait Shared extends ScalaProject with PublishedProject {
+      def ivyDeps = Agg(Deps.io.github.kitlangton.neotype)
+    }
+
+    object jvm extends Shared with ScalaJvmProject {
+      object test extends ScalaTests with ZioTestProject {}
+    }
+
+    object js extends Shared with ScalaJSProject {
+      object test extends ScalaJSTests with ZioTestProject {}
+    }
+
+  }
+
   object zio extends Module {
     object json extends CrossPlatform {
-      trait Shared
-          extends ScalaProject
-          with PlatformScalaModule
-          with PublishedProject {
+      trait Shared extends ScalaProject with PublishedProject {
+        def platformModuleDeps = Seq(std, serde)
         def ivyDeps = Agg(Deps.dev.zio.`zio-json`)
       }
 
-      object jvm extends Shared with PublishedProject {
+      object jvm extends Shared with ScalaJvmProject {
         object test extends ScalaTests with ZioTestProject {}
       }
 
-      object js extends Shared with ScalaJSProject with PublishedProject {
+      object js extends Shared with ScalaJSProject {
         object test extends ScalaJSTests with ZioTestProject {}
       }
 
@@ -66,11 +83,7 @@ trait PublishedProject extends Project with CiReleaseModule with JavaModule {
   )
 }
 
-trait Project extends JavaModule {
-  abstract override def artifactNameParts: T[Seq[String]] = T {
-    "iron" :: "serde" :: super.artifactNameParts().toList.tail
-  }
-}
+trait Project extends JavaModule {}
 
 trait ZioTestProject extends TestModule.ZioTest {
   override def ivyDeps = Agg(
@@ -81,15 +94,19 @@ trait ZioTestProject extends TestModule.ZioTest {
 
 }
 
-trait ScalaProject extends Project with ScalaModule {
+trait ScalaProject extends Project with PlatformAwareScalaProject {
   def scalaVersion = Versions.scala
 }
 
-trait ScalaJSProject extends Project with ScalaJSModule {
+trait ScalaJvmProject extends crossbuild.ScalaJvmProject with ScalaProject {}
+
+trait ScalaJSProject extends ScalaProject with crossbuild.ScalaJsProject {
   def scalaJSVersion = Versions.scalaJS
 }
 
-trait ScalaNativeProject extends Project with ScalaNativeModule {
+trait ScalaNativeProject
+    extends ScalaProject
+    with crossbuild.ScalaNativeProject {
   def scalaNativeVersion = Versions.scalaNative
 }
 

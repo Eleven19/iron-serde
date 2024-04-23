@@ -1,4 +1,4 @@
-package io.eleven19.ironserde.std
+package io.eleven19.irony.std
 
 trait Error[+Self]:
   type Error <: Self

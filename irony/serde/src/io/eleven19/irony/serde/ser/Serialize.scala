@@ -1,5 +1,5 @@
-package io.eleven19.ironserde.ser
-import io.eleven19.ironserde.Result 
+package io.eleven19.irony.serde.ser
+import io.eleven19.irony.std.Result 
 
 trait Serialize[-Self]:
   def serialize[S <: Serializer](

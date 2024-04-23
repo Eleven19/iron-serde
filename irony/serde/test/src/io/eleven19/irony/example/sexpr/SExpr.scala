@@ -1,5 +1,6 @@
-package io.eleven19.ironserde.example.sexpr
-import io.eleven19.ironserde.{Serializer, Serialize, Result}
+package io.eleven19.irony.example.sexpr
+import io.eleven19.irony.std.Result
+import io.eleven19.irony.serde.ser.{Serializer, Serialize}
 
 enum SAtom:
   case Bool(value: Boolean)
