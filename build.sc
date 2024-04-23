@@ -30,9 +30,7 @@ object irony extends CrossPlatform {
   }
 
   object std extends CrossPlatform {
-    trait Shared extends ScalaProject with PublishedProject {
-      def ivyDeps = Agg(Deps.io.github.kitlangton.neotype)
-    }
+    trait Shared extends ScalaProject with PublishedProject {}
 
     object jvm extends Shared with ScalaJvmProject {
       object test extends ScalaTests with ZioTestProject {}
@@ -40,6 +38,10 @@ object irony extends CrossPlatform {
 
     object js extends Shared with ScalaJSProject {
       object test extends ScalaJSTests with ZioTestProject {}
+    }
+
+    object native extends Shared with ScalaNativeProject {
+      // object test extends ScalaNativeTests with ZioTestProject {}
     }
 
   }
